@@ -433,6 +433,27 @@ function updateStartScreen() {
 
 function shuffle(a) { return [...a].sort(()=>Math.random()-.5); }
 
+// ── Wikipedia画像解決 ──
+const _imgCache = {};
+async function resolveImage(image) {
+  if (!image) return '';
+  if (!image.startsWith('wiki:')) return image;
+  const title = image.slice(5);
+  if (_imgCache[title] !== undefined) return _imgCache[title];
+  try {
+    const res = await fetch(
+      `https://ja.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`
+    );
+    const data = await res.json();
+    const url = data.thumbnail?.source || '';
+    _imgCache[title] = url;
+    return url;
+  } catch(e) {
+    _imgCache[title] = '';
+    return '';
+  }
+}
+
 async function buildQuestions() {
   const weak = getWeak();
   const cat = document.getElementById('cat-select').value;
@@ -466,12 +487,12 @@ function renderQuestion(item) {
 
   // 画像
   const img = document.getElementById('q-image');
+  img.src = '';
+  img.className = 'q-image hidden';
   if (item.image) {
-    img.src = item.image;
-    img.className = 'q-image';
-  } else {
-    img.src = '';
-    img.className = 'q-image hidden';
+    resolveImage(item.image).then(url => {
+      if (url) { img.src = url; img.className = 'q-image'; }
+    });
   }
 
   document.getElementById('q-text').textContent = item.question;

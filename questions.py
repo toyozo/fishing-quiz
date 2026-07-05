@@ -16,7 +16,7 @@ QUESTION_BANK = [
         "id": 1,
         "category": "魚種当て",
         "question": "この魚はどれでしょう？",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Cyprinus_carpio_Luc_Viatour.jpg/320px-Cyprinus_carpio_Luc_Viatour.jpg",
+        "image": "wiki:コイ",
         "choices": ["コイ", "フナ", "ソウギョ", "ハクレン"],
         "answer": "コイ",
         "explanation": "コイは日本最大級の淡水魚の一つで、ヒゲが2対あるのが特徴。体長1mを超えることもある。"
@@ -25,7 +25,7 @@ QUESTION_BANK = [
         "id": 2,
         "category": "魚種当て",
         "question": "この魚はどれでしょう？",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Largemouth_bass_fish.jpg/320px-Largemouth_bass_fish.jpg",
+        "image": "wiki:オオクチバス",
         "choices": ["ラージマウスバス", "スモールマウスバス", "ブルーギル", "チャンネルキャットフィッシュ"],
         "answer": "ラージマウスバス",
         "explanation": "オオクチバスとも呼ばれる特定外来生物。口が大きく上顎が目の後ろまで達するのが特徴。"
@@ -34,7 +34,7 @@ QUESTION_BANK = [
         "id": 3,
         "category": "魚種当て",
         "question": "この魚はどれでしょう？",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Trout_fishing.jpg/320px-Trout_fishing.jpg",
+        "image": "wiki:ニジマス",
         "choices": ["ニジマス", "イワナ", "ヤマメ", "アマゴ"],
         "answer": "ニジマス",
         "explanation": "北米原産の外来種で、体側に虹色の帯があるのが名前の由来。管理釣り場で最もよく見られるマス。"
@@ -43,7 +43,7 @@ QUESTION_BANK = [
         "id": 4,
         "category": "魚種当て",
         "question": "この魚はどれでしょう？",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Gnome-packagemanager.svg/320px-Gnome-packagemanager.svg.png",
+        "image": "wiki:アユ",
         "choices": ["アユ", "ウグイ", "オイカワ", "カワムツ"],
         "answer": "アユ",
         "explanation": "「清流の女王」と呼ばれる日本を代表する釣り魚。香魚とも呼ばれ、スイカのような独特の香りを持つ。"
@@ -52,7 +52,7 @@ QUESTION_BANK = [
         "id": 5,
         "category": "魚種当て",
         "question": "この魚はどれでしょう？",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Yellowfin_tuna_nurp.jpg/320px-Yellowfin_tuna_nurp.jpg",
+        "image": "wiki:キハダ",
         "choices": ["キハダマグロ", "クロマグロ", "メバチマグロ", "ビンナガマグロ"],
         "answer": "キハダマグロ",
         "explanation": "黄色いひれが特徴のマグロ。熱帯・亜熱帯の海に生息し、日本近海でも釣れる人気のターゲット。"
@@ -61,7 +61,7 @@ QUESTION_BANK = [
         "id": 6,
         "category": "魚種当て",
         "question": "この魚はどれでしょう？",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Scomber_japonicus.jpg/320px-Scomber_japonicus.jpg",
+        "image": "wiki:マサバ",
         "choices": ["サバ", "サンマ", "イワシ", "アジ"],
         "answer": "サバ",
         "explanation": "青魚の代表格。背中の波状模様が特徴で、サビキ釣りや泳がせ釣りの対象魚として人気。"
@@ -70,7 +70,7 @@ QUESTION_BANK = [
         "id": 7,
         "category": "魚種当て",
         "question": "この魚はどれでしょう？",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Sebastes_schlegelii.jpg/320px-Sebastes_schlegelii.jpg",
+        "image": "wiki:メバル",
         "choices": ["メバル", "カサゴ", "アイナメ", "ソイ"],
         "answer": "メバル",
         "explanation": "春の釣り魚の代表。夜行性で港や磯の岩礁帯に生息する。目が大きいことが名前の由来。"
@@ -79,7 +79,7 @@ QUESTION_BANK = [
         "id": 8,
         "category": "魚種当て",
         "question": "この魚はどれでしょう？",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Pagrus_major.jpg/320px-Pagrus_major.jpg",
+        "image": "wiki:マダイ",
         "choices": ["マダイ", "チダイ", "クロダイ", "キダイ"],
         "answer": "マダイ",
         "explanation": "「魚の王様」と称される日本を代表する釣り魚。赤い体色と青い斑点が特徴。"
@@ -88,7 +88,7 @@ QUESTION_BANK = [
         "id": 9,
         "category": "魚種当て",
         "question": "この魚はどれでしょう？",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Seriola_quinqueradiata.jpg/320px-Seriola_quinqueradiata.jpg",
+        "image": "wiki:ブリ",
         "choices": ["ブリ", "カンパチ", "ヒラマサ", "シマアジ"],
         "answer": "ブリ",
         "explanation": "出世魚の代表。関東ではワカシ→イナダ→ワラサ→ブリと名前が変わる。ジギングやキャスティングで人気。"
@@ -97,7 +97,7 @@ QUESTION_BANK = [
         "id": 10,
         "category": "魚種当て",
         "question": "この魚はどれでしょう？",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Micropterus_salmoides.jpg/320px-Micropterus_salmoides.jpg",
+        "image": "wiki:コクチバス",
         "choices": ["スモールマウスバス", "ラージマウスバス", "ブルーギル", "ナマズ"],
         "answer": "スモールマウスバス",
         "explanation": "コクチバスとも呼ばれる特定外来生物。口が小さく体高があり、流れのある川を好む。"
