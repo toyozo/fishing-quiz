@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>釣り人テスト</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#ffffff; --bg2:#f0f7ff; --bg3:#daeaf8;
+      --text:#0d2137; --text2:#4a6680;
+      --border:rgba(0,0,0,0.09); --border2:rgba(0,0,0,0.18);
+      --primary:#1a6fa8; --primary-light:#daeaf8; --primary-text:#1a6fa8;
+      --green-bg:#e6f4ea; --green-text:#1e6b3a; --green-border:#3a9e5f;
+      --red-bg:#fdecea; --red-text:#7b1c1c; --red-border:#c0392b;
+      --yellow-bg:#fef9e7; --yellow-text:#7d5a00; --yellow-border:#c9a227;
+      --radius-sm:6px; --radius-md:8px; --radius-lg:12px; --radius-xl:18px;
+    }
+    body {
+      font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
+      background:var(--bg2); min-height:100dvh;
+      display:flex; align-items:flex-start; justify-content:center; padding:1rem;
+    }
+    .card {
+      background:var(--bg); border-radius:var(--radius-xl); border:0.5px solid var(--border);
+      width:100%; max-width:480px; padding:2rem 1.5rem;
+      display:flex; flex-direction:column; align-items:center;
+      margin-top:1rem; margin-bottom:2rem;
+    }
+    .screen { display:none; flex-direction:column; align-items:center; width:100%; }
+    .screen.active { display:flex; }
+
+    .app-badge {
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--primary); color:#fff;
+      font-size:11px; font-weight:600; letter-spacing:.06em;
+      padding:4px 12px; border-radius:20px; margin-bottom:1rem;
+    }
+    .btn-primary {
+      width:100%; padding:14px; background:var(--primary); color:#fff;
+      border:none; border-radius:var(--radius-lg); font-size:15px; font-weight:600;
+      cursor:pointer; transition:opacity .15s; margin-bottom:10px;
+    }
+    .btn-primary:hover { opacity:.85; }
+    .btn-primary:active { transform:scale(.98); }
+    .btn-ghost {
+      width:100%; padding:11px; background:transparent; color:var(--text2);
+      border:0.5px solid var(--border2); border-radius:var(--radius-lg);
+      font-size:14px; cursor:pointer; transition:background .12s; margin-bottom:8px;
+    }
+    .btn-ghost:hover { background:var(--bg2); }
+    .btn-danger {
+      width:100%; padding:11px; background:transparent; color:var(--red-text);
+      border:0.5px solid var(--red-border); border-radius:var(--radius-lg);
+      font-size:14px; cursor:pointer; transition:background .12s; margin-bottom:8px;
+    }
+    .btn-danger:hover { background:var(--red-bg); }
+
+    .start-logo { font-size:52px; margin-bottom:.75rem; }
+    .start-title { font-size:20px; font-weight:700; color:var(--text); margin-bottom:.3rem; text-align:center; }
+    .start-sub { font-size:13px; color:var(--text2); margin-bottom:1rem; text-align:center; line-height:1.7; }
+    .disclaimer {
+      font-size:11px; color:var(--text2); text-align:center;
+      line-height:1.6; margin-bottom:1.25rem; padding:8px 12px;
+      background:var(--bg2); border-radius:var(--radius-md);
+      border:.5px solid var(--border);
+    }
+    .kpi-row { display:flex; gap:8px; width:100%; margin-bottom:1.5rem; }
+    .kpi-card { flex:1; background:var(--bg2); border-radius:var(--radius-md); padding:.75rem; text-align:center; }
+    .kpi-card .num { font-size:19px; font-weight:700; color:var(--primary); }
+    .kpi-card .lbl { font-size:11px; color:var(--text2); margin-top:2px; }
+
+    .cat-label { font-size:13px; font-weight:600; color:var(--text2); width:100%; margin-bottom:.5rem; }
+    .cat-select {
+      width:100%; padding:10px 12px; border:.5px solid var(--border2);
+      border-radius:var(--radius-md); font-size:14px; color:var(--text);
+      background:var(--bg); appearance:none; margin-bottom:1.5rem;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a6680' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 12px center;
+      cursor:pointer;
+    }
+    .mode-row { display:flex; gap:8px; margin-bottom:1.25rem; width:100%; }
+    .mode-btn {
+      flex:1; padding:11px 6px; border-radius:var(--radius-lg);
+      border:1.5px solid var(--border2); background:var(--bg);
+      font-size:13px; font-weight:500; color:var(--text2);
+      cursor:pointer; text-align:center; transition:all .15s; line-height:1.5;
+    }
+    .mode-btn .mi { font-size:18px; display:block; margin-bottom:3px; }
+    .mode-btn.selected { border-color:var(--primary); color:var(--primary); background:var(--primary-light); }
+    .mode-btn.weak-disabled { opacity:.4; cursor:not-allowed; }
+
+    .progress-wrap { width:100%; height:4px; background:var(--border); border-radius:2px; margin-bottom:1.25rem; overflow:hidden; }
+    .progress-fill { height:100%; background:var(--primary); border-radius:2px; transition:width .35s ease; }
+    .q-meta { display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:.75rem; }
+    .q-count { font-size:13px; color:var(--text2); font-weight:500; }
+    .cat-badge {
+      font-size:11px; font-weight:600; padding:2px 9px; border-radius:20px;
+      background:var(--primary-light); color:var(--primary-text); max-width:60%; overflow:hidden;
+      white-space:nowrap; text-overflow:ellipsis;
+    }
+    .mode-badge-q {
+      font-size:11px; font-weight:600; padding:2px 9px; border-radius:20px;
+      background:var(--yellow-bg); color:var(--yellow-text); border:.5px solid var(--yellow-border);
+    }
+    /* 魚種当て画像 */
+    .q-image {
+      width:100%; max-height:220px; object-fit:cover;
+      border-radius:var(--radius-md); margin-bottom:1rem;
+      border:.5px solid var(--border2);
+    }
+    .q-image.hidden { display:none; }
+    .q-text {
+      font-size:15px; font-weight:500; color:var(--text); margin-bottom:1.5rem;
+      text-align:left; line-height:1.75; width:100%;
+      padding:1rem; background:var(--bg2); border-radius:var(--radius-md);
+      border-left:3px solid var(--primary);
+    }
+    .choices { display:flex; flex-direction:column; gap:9px; width:100%; }
+    .choice-btn {
+      width:100%; padding:12px 14px; background:var(--bg); border:.5px solid var(--border2);
+      border-radius:var(--radius-lg); font-size:14px; color:var(--text);
+      cursor:pointer; text-align:left; transition:background .12s,border-color .12s;
+      display:flex; align-items:flex-start; gap:10px; line-height:1.5;
+    }
+    .choice-btn:hover:not(:disabled) { background:var(--bg2); border-color:var(--primary); }
+    .choice-btn.correct { background:var(--green-bg); border-color:var(--green-border); color:var(--green-text); }
+    .choice-btn.wrong   { background:var(--red-bg);   border-color:var(--red-border);   color:var(--red-text); }
+    .choice-btn.reveal  { background:var(--green-bg); border-color:var(--green-border); color:var(--green-text); }
+    .choice-icon { width:18px; flex-shrink:0; margin-top:1px; }
+    .feedback {
+      margin-top:1rem; padding:11px 14px; border-radius:var(--radius-md);
+      font-size:13px; font-weight:500; width:100%; opacity:0; transition:opacity .2s; line-height:1.5;
+    }
+    .feedback.show { opacity:1; }
+    .feedback.ok { background:var(--green-bg); color:var(--green-text); }
+    .feedback.ng { background:var(--red-bg); color:var(--red-text); }
+    .explanation {
+      margin-top:.5rem; padding:10px 14px; border-radius:var(--radius-md);
+      font-size:12px; color:var(--text2); background:var(--bg2);
+      border-left:3px solid var(--border2); line-height:1.7;
+      width:100%; opacity:0; transition:opacity .2s; display:none;
+    }
+    .explanation.show { opacity:1; display:block; }
+    .report-btn {
+      margin-top:.4rem; padding:5px 12px; font-size:11px; color:var(--text2);
+      background:transparent; border:.5px solid var(--border2); border-radius:20px;
+      cursor:pointer; align-self:flex-end; transition:background .12s,color .12s;
+      display:none; text-decoration:none;
+    }
+    .report-btn.show { display:inline-block; }
+    .report-btn:hover { background:var(--red-bg); color:var(--red-text); border-color:var(--red-border); }
+    .next-btn {
+      margin-top:.85rem; width:100%; padding:12px; background:transparent;
+      border:.5px solid var(--border2); border-radius:var(--radius-lg);
+      font-size:14px; font-weight:500; color:var(--text);
+      cursor:pointer; opacity:0; pointer-events:none; transition:opacity .2s,background .12s;
+    }
+    .next-btn.show { opacity:1; pointer-events:auto; }
+    .next-btn:hover { background:var(--bg2); }
+
+    .result-icon { font-size:54px; margin-bottom:.75rem; }
+    .result-score { font-size:46px; font-weight:700; color:var(--primary); line-height:1; margin-bottom:.3rem; }
+    .result-label { font-size:15px; color:var(--text2); margin-bottom:.75rem; }
+    .result-msg { font-size:13px; color:var(--text2); margin-bottom:1.25rem; text-align:center; line-height:1.65; }
+    .breakdown { width:100%; display:flex; flex-direction:column; gap:7px; margin-bottom:1.25rem; max-height:320px; overflow-y:auto; }
+    .b-row {
+      display:flex; justify-content:space-between; align-items:flex-start;
+      padding:10px 12px; background:var(--bg2); border-radius:var(--radius-md); gap:8px;
+    }
+    .b-q { font-size:12px; color:var(--text); line-height:1.5; flex:1; }
+    .b-cat { font-size:10px; color:var(--text2); margin-bottom:2px; }
+    .verdict { font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; white-space:nowrap; flex-shrink:0; margin-top:1px; }
+    .v-ok { background:var(--green-bg); color:var(--green-text); }
+    .v-ng { background:var(--red-bg); color:var(--red-text); }
+
+    .section-title {
+      font-size:16px; font-weight:700; color:var(--text); width:100%; margin-bottom:1rem;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .weak-count { font-size:13px; font-weight:400; color:var(--text2); }
+    .weak-list { width:100%; display:flex; flex-direction:column; gap:7px; margin-bottom:1.25rem; max-height:340px; overflow-y:auto; }
+    .weak-row { padding:10px 12px; background:var(--bg2); border-radius:var(--radius-md); }
+    .weak-q { font-size:13px; color:var(--text); line-height:1.5; margin-bottom:4px; }
+    .weak-cat { font-size:11px; color:var(--text2); margin-bottom:6px; }
+    .weak-row-footer { display:flex; justify-content:flex-end; }
+    .weak-del {
+      font-size:12px; padding:4px 10px; border:.5px solid var(--border2); border-radius:20px;
+      background:transparent; color:var(--text2); cursor:pointer; transition:background .12s,color .12s;
+    }
+    .weak-del:hover { background:var(--red-bg); color:var(--red-text); border-color:var(--red-border); }
+    .empty-msg { font-size:14px; color:var(--text2); text-align:center; padding:2.5rem 0; line-height:1.7; }
+
+    .dash-title { font-size:18px; font-weight:700; color:var(--text); width:100%; margin-bottom:1.25rem; }
+    .dash-kpi-row { display:flex; gap:8px; width:100%; margin-bottom:1.25rem; }
+    .dk-card { flex:1; background:var(--bg2); border-radius:var(--radius-md); padding:.75rem; text-align:center; }
+    .dk-card .dk-num { font-size:22px; font-weight:700; color:var(--primary); }
+    .dk-card .dk-lbl { font-size:11px; color:var(--text2); margin-top:2px; }
+    .dk-card .dk-sub { font-size:10px; color:var(--text2); }
+    .dash-sec { width:100%; margin-bottom:1.25rem; }
+    .dash-sec-title { font-size:12px; font-weight:700; color:var(--text2); margin-bottom:.6rem; text-transform:uppercase; letter-spacing:.06em; }
+    .chart-wrap { width:100%; height:110px; position:relative; }
+    canvas#chart { width:100% !important; height:100% !important; }
+    .no-data { font-size:13px; color:var(--text2); text-align:center; padding:1.5rem 0; }
+    .streak-bar { display:flex; gap:3px; flex-wrap:wrap; }
+    .streak-day { width:22px; height:22px; border-radius:4px; background:var(--bg3); }
+    .streak-day.done { background:var(--primary); opacity:.65; }
+    .streak-day.done-high { background:var(--primary); opacity:1; }
+    .streak-day.today { outline:2px solid var(--primary); outline-offset:1px; }
+    .cat-stats { width:100%; display:flex; flex-direction:column; gap:6px; }
+    .cat-stat-row { display:flex; align-items:center; gap:8px; font-size:12px; }
+    .cat-stat-name { width:120px; color:var(--text); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; flex-shrink:0; }
+    .cat-bar-wrap { flex:1; height:8px; background:var(--bg3); border-radius:4px; overflow:hidden; }
+    .cat-bar-fill { height:100%; background:var(--primary); border-radius:4px; opacity:.7; transition:width .5s; }
+    .cat-stat-pct { width:36px; text-align:right; color:var(--text2); flex-shrink:0; }
+
+    .loading { display:flex; flex-direction:column; align-items:center; gap:12px; padding:2.5rem 0; width:100%; }
+    .spinner { width:28px; height:28px; border:2.5px solid var(--border); border-top-color:var(--primary); border-radius:50%; animation:spin .7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading-text { font-size:14px; color:var(--text2); }
+
+    @media (prefers-color-scheme:dark) {
+      :root {
+        --bg:#0d1f2d; --bg2:#122333; --bg3:#1a3148;
+        --text:#e0eef8; --text2:#7a9ab8;
+        --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.15);
+        --primary:#3d9bd4; --primary-light:#0d2233; --primary-text:#7ec8f0;
+        --green-bg:#0d2616; --green-text:#6dd08a; --green-border:#2d7a4a;
+        --red-bg:#250d0d; --red-text:#f08080; --red-border:#7b1c1c;
+        --yellow-bg:#1f1800; --yellow-text:#d4aa40; --yellow-border:#7d5a00;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+
+  <!-- ① START -->
+  <div id="screen-start" class="screen active">
+    <div class="app-badge">🎣 釣り人テスト</div>
+    <div class="start-logo">🐟</div>
+    <div class="start-title">釣り人テスト</div>
+    <div class="start-sub">魚の知識・釣り方・ルールまで<br>釣り人なら知っておきたい100問</div>
+    <div class="disclaimer">本アプリは非公式コンテンツです。問題・解説はAIを活用して作成しており、内容の正確性については保証できません。学習の参考としてご活用いただき、重要な事項は必ず公式情報でご確認ください。</div>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="num" id="stat-total">0</div><div class="lbl">総回答数</div></div>
+      <div class="kpi-card"><div class="num" id="stat-weak">0</div><div class="lbl">苦手問題</div></div>
+      <div class="kpi-card"><div class="num" id="stat-streak">0</div><div class="lbl">連続日数🔥</div></div>
+    </div>
+
+    <div class="cat-label">出題カテゴリ</div>
+    <select class="cat-select" id="cat-select">
+      <option value="all">すべてのカテゴリ</option>
+    </select>
+
+    <div class="mode-row">
+      <button class="mode-btn selected" id="mode-normal" onclick="selectMode('normal')">
+        <span class="mi">📚</span>通常モード
+      </button>
+      <button class="mode-btn" id="mode-weak" onclick="selectMode('weak')">
+        <span class="mi">🎯</span>苦手モード
+      </button>
+    </div>
+    <button class="btn-primary" id="start-btn">▶ テスト開始</button>
+    <button class="btn-ghost" id="dash-btn">📊 学習ダッシュボード</button>
+    <button class="btn-ghost" id="weak-list-btn">📋 苦手問題リストを見る</button>
+  </div>
+
+  <!-- ② QUESTION -->
+  <div id="screen-question" class="screen">
+    <div class="progress-wrap"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="q-meta">
+      <span class="q-count" id="q-count">問1 / 5</span>
+      <span id="q-badge" class="cat-badge"></span>
+    </div>
+    <div class="loading" id="q-loading"><div class="spinner"></div><div class="loading-text">問題を取得中...</div></div>
+    <div id="q-content" style="display:none;flex-direction:column;align-items:center;width:100%;">
+      <img id="q-image" class="q-image hidden" alt="魚の画像" />
+      <div class="q-text" id="q-text"></div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="explanation" id="explanation"></div>
+      <a class="report-btn" id="report-btn">⚑ この問題を報告する</a>
+      <button class="next-btn" id="next-btn">次の問題へ →</button>
+    </div>
+  </div>
+
+  <!-- ③ RESULT -->
+  <div id="screen-result" class="screen">
+    <div class="result-icon" id="result-icon">🎉</div>
+    <div class="result-score" id="result-score">4 / 5</div>
+    <div class="result-label" id="result-label">5問中4問正解</div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="breakdown" id="breakdown"></div>
+    <button class="btn-primary" id="retry-btn">↺ もう一度挑戦する</button>
+    <button class="btn-ghost" id="result-home-btn">← ホームへ戻る</button>
+  </div>
+
+  <!-- ④ WEAK LIST -->
+  <div id="screen-weak" class="screen">
+    <div class="section-title">
+      📋 苦手問題リスト <span class="weak-count" id="weak-count">0問</span>
+    </div>
+    <div class="weak-list" id="weak-list"></div>
+    <button class="btn-danger" id="clear-all-btn">🗑 すべてクリア</button>
+    <button class="btn-ghost" id="weak-home-btn">← ホームへ戻る</button>
+  </div>
+
+  <!-- ⑤ DASHBOARD -->
+  <div id="screen-dash" class="screen">
+    <div class="dash-title">📊 学習ダッシュボード</div>
+    <div class="dash-kpi-row">
+      <div class="dk-card"><div class="dk-num" id="dk-total">0</div><div class="dk-lbl">総セッション</div></div>
+      <div class="dk-card"><div class="dk-num" id="dk-rate">—</div><div class="dk-lbl">平均正解率</div></div>
+      <div class="dk-card"><div class="dk-num" id="dk-streak">0</div><div class="dk-lbl">連続日数🔥</div><div class="dk-sub" id="dk-best"></div></div>
+    </div>
+    <div class="dash-sec">
+      <div class="dash-sec-title">正解率の推移（直近10回）</div>
+      <div class="chart-wrap"><canvas id="chart"></canvas></div>
+      <div class="no-data" id="chart-no-data" style="display:none">まだデータがありません</div>
+    </div>
+    <div class="dash-sec">
+      <div class="dash-sec-title">学習カレンダー（直近28日）</div>
+      <div class="streak-bar" id="streak-bar"></div>
+    </div>
+    <div class="dash-sec">
+      <div class="dash-sec-title">カテゴリ別正解率</div>
+      <div class="cat-stats" id="cat-stats"></div>
+      <div class="no-data" id="cat-no-data" style="display:none">まだデータがありません</div>
+    </div>
+    <button class="btn-ghost" id="dash-home-btn">← ホームへ戻る</button>
+  </div>
+
+</div>
+
+<script>
+const TOTAL = 5;
+const LS_WEAK     = 'fishing_quiz_weak';
+const LS_HISTORY  = 'fishing_quiz_history';
+const LS_CAT_STAT = 'fishing_quiz_cat_stat';
+const REPORT_MAIL = 'tsuretahi@gmail.com';
+
+function getWeak()    { try { return JSON.parse(localStorage.getItem(LS_WEAK))    || []; } catch { return []; } }
+function getHistory() { try { return JSON.parse(localStorage.getItem(LS_HISTORY)) || []; } catch { return []; } }
+function getCatStat() { try { return JSON.parse(localStorage.getItem(LS_CAT_STAT))|| {}; } catch { return {}; } }
+function saveWeak(l)  { localStorage.setItem(LS_WEAK, JSON.stringify(l)); }
+function pushHistory(e) {
+  const h = getHistory(); h.push(e);
+  if (h.length > 200) h.splice(0, h.length-200);
+  localStorage.setItem(LS_HISTORY, JSON.stringify(h));
+}
+function saveCatStat(s) { localStorage.setItem(LS_CAT_STAT, JSON.stringify(s)); }
+
+function addWeak(id, question, answer, category, explanation) {
+  const l = getWeak();
+  if (!l.find(w => w.id === id)) l.push({id, question, answer, category, explanation: explanation||''});
+  saveWeak(l);
+}
+function removeWeak(id) { saveWeak(getWeak().filter(w => w.id !== id)); }
+
+function updateCatStat(category, correct) {
+  const s = getCatStat();
+  if (!s[category]) s[category] = {correct:0, total:0};
+  s[category].total++;
+  if (correct) s[category].correct++;
+  saveCatStat(s);
+}
+
+function dateStr(d) {
+  const dd = d||new Date();
+  return dd.getFullYear()+'-'+String(dd.getMonth()+1).padStart(2,'0')+'-'+String(dd.getDate()).padStart(2,'0');
+}
+function calcStreak(history) {
+  const days = new Set(history.map(h=>h.date));
+  let streak=0, best=0, cur=0;
+  const today = new Date();
+  let d = new Date(today);
+  if (!days.has(dateStr(d))) d.setDate(d.getDate()-1);
+  while (days.has(dateStr(d))) { streak++; d.setDate(d.getDate()-1); }
+  const sorted = [...days].sort();
+  sorted.forEach((ds,i) => {
+    if (i===0) { cur=1; }
+    else {
+      const prev = new Date(sorted[i-1]); prev.setDate(prev.getDate()+1);
+      cur = dateStr(prev)===ds ? cur+1 : 1;
+    }
+    if (cur>best) best=cur;
+  });
+  return {streak, best};
+}
+
+let state = {questions:[], idx:0, results:[], answered:false, mode:'normal'};
+let selectedMode = 'normal';
+let categories = [];
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+async function loadCategories() {
+  try {
+    const res = await fetch('/categories');
+    const data = await res.json();
+    categories = data.categories || [];
+    const sel = document.getElementById('cat-select');
+    categories.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  } catch(e) { console.warn('cat load failed', e); }
+}
+
+function selectMode(mode) {
+  if (mode==='weak' && getWeak().length===0) return;
+  selectedMode = mode;
+  document.getElementById('mode-normal').classList.toggle('selected', mode==='normal');
+  document.getElementById('mode-weak').classList.toggle('selected', mode==='weak');
+}
+
+function updateStartScreen() {
+  const h = getHistory();
+  const weak = getWeak();
+  document.getElementById('stat-total').textContent = h.reduce((s,e)=>s+e.total,0);
+  document.getElementById('stat-weak').textContent = weak.length;
+  const {streak} = calcStreak(h);
+  document.getElementById('stat-streak').textContent = streak;
+  const wb = document.getElementById('mode-weak');
+  if (weak.length===0) { wb.classList.add('weak-disabled'); if (selectedMode==='weak') selectMode('normal'); }
+  else wb.classList.remove('weak-disabled');
+}
+
+function shuffle(a) { return [...a].sort(()=>Math.random()-.5); }
+
+async function buildQuestions() {
+  const weak = getWeak();
+  const cat = document.getElementById('cat-select').value;
+  if (selectedMode==='weak' && weak.length>0) {
+    const shuffledWeak = shuffle(weak).slice(0,TOTAL);
+    let extras = [];
+    if (shuffledWeak.length < TOTAL) {
+      const res = await fetch(`/questions?count=20${cat!=='all'?'&category='+encodeURIComponent(cat):''}`);
+      const all = await res.json();
+      const weakIds = new Set(weak.map(w=>w.id));
+      extras = shuffle(all.filter(q=>!weakIds.has(q.id))).slice(0, TOTAL-shuffledWeak.length);
+    }
+    const allRes = await fetch(`/questions?count=20`);
+    const allQ = await allRes.json();
+    const allAnswers = allQ.map(q=>q.answer);
+    const weakQuestions = shuffledWeak.map(w => {
+      const wrong = shuffle(allAnswers.filter(a=>a!==w.answer)).slice(0,3);
+      return {id:w.id, category:w.category, question:w.question, choices:shuffle([w.answer,...wrong]), answer:w.answer, explanation:w.explanation||'', image:w.image||''};
+    });
+    return shuffle([...weakQuestions, ...extras]).slice(0,TOTAL);
+  }
+  const url = `/questions?count=${TOTAL*3}${cat!=='all'?'&category='+encodeURIComponent(cat):''}`;
+  const res = await fetch(url);
+  const all = await res.json();
+  return shuffle(all).slice(0,TOTAL);
+}
+
+function renderQuestion(item) {
+  document.getElementById('q-loading').style.display = 'none';
+  const c = document.getElementById('q-content'); c.style.display = 'flex';
+
+  // 画像
+  const img = document.getElementById('q-image');
+  if (item.image) {
+    img.src = item.image;
+    img.className = 'q-image';
+  } else {
+    img.src = '';
+    img.className = 'q-image hidden';
+  }
+
+  document.getElementById('q-text').textContent = item.question;
+  document.getElementById('q-badge').textContent = item.category;
+  document.getElementById('q-badge').className = state.mode==='weak' ? 'mode-badge-q' : 'cat-badge';
+  const el = document.getElementById('choices'); el.innerHTML='';
+  item.choices.forEach(ch => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-icon"></span><span>${ch}</span>`;
+    btn.addEventListener('click', ()=>handleAnswer(ch,item,btn));
+    el.appendChild(btn);
+  });
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('explanation').className = 'explanation';
+  document.getElementById('explanation').textContent = '';
+  const rb = document.getElementById('report-btn');
+  rb.className = 'report-btn'; rb.href = '#';
+  const nb = document.getElementById('next-btn');
+  nb.className = 'next-btn';
+  nb.textContent = state.idx<TOTAL-1 ? '次の問題へ →' : '結果を見る →';
+  state.answered = false;
+}
+
+function handleAnswer(chosen, item, clicked) {
+  if (state.answered) return;
+  state.answered = true;
+  const correct = chosen===item.answer;
+  if (correct) soundCorrect(); else soundWrong();
+  state.results.push({...item, userCorrect:correct, _userAnswer:chosen});
+  if (correct) removeWeak(item.id);
+  else addWeak(item.id, item.question, item.answer, item.category, item.explanation);
+  updateCatStat(item.category, correct);
+
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+    const txt = b.querySelector('span:last-child').textContent;
+    const icon = b.querySelector('.choice-icon');
+    if (txt===item.answer) { b.classList.add(b===clicked&&correct?'correct':'reveal'); icon.textContent='✓'; }
+    else if (b===clicked&&!correct) { b.classList.add('wrong'); icon.textContent='✗'; }
+  });
+  const fb = document.getElementById('feedback');
+  fb.className = `feedback show ${correct?'ok':'ng'}`;
+  fb.textContent = correct ? `✓ 正解！` : `✗ 不正解。正解：${item.answer}`;
+  if (item.explanation) {
+    const ex = document.getElementById('explanation');
+    ex.textContent = `💡 ${item.explanation}`;
+    ex.className = 'explanation show';
+  }
+
+  // 報告ボタン（mailto）
+  const rb = document.getElementById('report-btn');
+  const subject = encodeURIComponent(`[釣り人テスト] 問題報告 #${item.id}`);
+  const body = encodeURIComponent(
+    `問題ID: ${item.id}\n問題文: ${item.question}\n選択した回答: ${chosen}\n正解: ${item.answer}\n\n気になった点:\n`
+  );
+  rb.href = `mailto:${REPORT_MAIL}?subject=${subject}&body=${body}`;
+  rb.className = 'report-btn show';
+
+  document.getElementById('next-btn').classList.add('show');
+}
+
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = (state.idx/TOTAL*100)+'%';
+  document.getElementById('q-count').textContent = `問${state.idx+1} / ${TOTAL}`;
+}
+
+async function startQuiz() {
+  state = {questions:[], idx:0, results:[], answered:false, mode:selectedMode};
+  show('screen-question');
+  document.getElementById('q-loading').style.display = 'flex';
+  document.getElementById('q-content').style.display = 'none';
+  updateProgress();
+  state.questions = await buildQuestions();
+  renderQuestion(state.questions[0]);
+}
+
+function showResult() {
+  const correct = state.results.filter(r=>r.userCorrect).length;
+  pushHistory({date:dateStr(), correct, total:TOTAL, mode:state.mode});
+  soundForResult(correct, TOTAL);
+  document.getElementById('result-score').textContent = `${correct} / ${TOTAL}`;
+  document.getElementById('result-label').textContent = `${TOTAL}問中${correct}問正解`;
+  const pct = correct/TOTAL;
+  let icon='🎉', msg='';
+  if (pct===1)      { icon='🏆'; msg='満点！真の釣り人です！'; }
+  else if (pct>=.8) { icon='🎣'; msg='すばらしい！腕前は一人前！'; }
+  else if (pct>=.6) { icon='🐟'; msg='もう少し！苦手分野を集中復習しよう。'; }
+  else              { icon='💪'; msg='もっと釣りに行こう！経験が力になる。'; }
+  document.getElementById('result-icon').textContent = icon;
+  document.getElementById('result-msg').textContent = msg;
+  const bd = document.getElementById('breakdown'); bd.innerHTML='';
+  state.results.forEach(r => {
+    const row = document.createElement('div'); row.className='b-row';
+    row.innerHTML = `
+      <div style="flex:1">
+        <div class="b-cat">${r.category}</div>
+        <div class="b-q">${r.question.length>60?r.question.slice(0,60)+'…':r.question}</div>
+        ${!r.userCorrect?`<div style="font-size:11px;color:var(--red-text);margin-top:3px">正解：${r.answer}</div>`:''}
+      </div>
+      <span class="verdict ${r.userCorrect?'v-ok':'v-ng'}">${r.userCorrect?'正解':'不正解'}</span>`;
+    bd.appendChild(row);
+  });
+  show('screen-result');
+}
+
+function showWeakList() {
+  const list = getWeak();
+  document.getElementById('weak-count').textContent = `${list.length}問`;
+  const el = document.getElementById('weak-list'); el.innerHTML='';
+  if (list.length===0) {
+    el.innerHTML='<div class="empty-msg">苦手問題はまだありません 🎉<br>不正解の問題が自動登録されます</div>';
+    document.getElementById('clear-all-btn').style.display='none';
+  } else {
+    document.getElementById('clear-all-btn').style.display='block';
+    list.forEach(w => {
+      const row = document.createElement('div'); row.className='weak-row';
+      row.innerHTML = `
+        <div class="weak-cat">${w.category}</div>
+        <div class="weak-q">${w.question}</div>
+        <div class="weak-row-footer"><button class="weak-del" data-id="${w.id}">克服した！</button></div>`;
+      el.appendChild(row);
+    });
+    el.querySelectorAll('.weak-del').forEach(btn => {
+      btn.addEventListener('click', ()=>{ removeWeak(Number(btn.dataset.id)); showWeakList(); updateStartScreen(); });
+    });
+  }
+  show('screen-weak');
+}
+
+function showDashboard() {
+  const history = getHistory();
+  const {streak, best} = calcStreak(history);
+  document.getElementById('dk-total').textContent = history.length;
+  document.getElementById('dk-streak').textContent = streak;
+  document.getElementById('dk-best').textContent = `ベスト ${best}日`;
+  if (history.length>0) {
+    const avg = history.reduce((s,h)=>s+h.correct/h.total,0)/history.length;
+    document.getElementById('dk-rate').textContent = Math.round(avg*100)+'%';
+  } else { document.getElementById('dk-rate').textContent='—'; }
+
+  const recent = history.slice(-10);
+  const chartNoData = document.getElementById('chart-no-data');
+  const chartEl = document.getElementById('chart');
+  if (recent.length<2) { chartNoData.style.display='block'; chartEl.style.display='none'; }
+  else { chartNoData.style.display='none'; chartEl.style.display='block'; drawChart(chartEl, recent); }
+
+  const days = new Set(history.map(h=>h.date));
+  const sessionsByDay = {};
+  history.forEach(h=>{ sessionsByDay[h.date]=(sessionsByDay[h.date]||0)+1; });
+  const bar = document.getElementById('streak-bar'); bar.innerHTML='';
+  const today = new Date();
+  for (let i=27; i>=0; i--) {
+    const d=new Date(today); d.setDate(d.getDate()-i);
+    const ds=dateStr(d);
+    const div=document.createElement('div');
+    const sessions=sessionsByDay[ds]||0;
+    div.className='streak-day'+(sessions>1?' done-high':sessions===1?' done':'')+(i===0?' today':'');
+    div.title=ds+(sessions?` (${sessions}回)`:'');
+    bar.appendChild(div);
+  }
+
+  const catStat = getCatStat();
+  const catEl = document.getElementById('cat-stats'); catEl.innerHTML='';
+  const catNoData = document.getElementById('cat-no-data');
+  const catEntries = Object.entries(catStat).sort((a,b)=>(a[1].correct/a[1].total)-(b[1].correct/b[1].total));
+  if (catEntries.length===0) { catNoData.style.display='block'; catEl.style.display='none'; }
+  else {
+    catNoData.style.display='none'; catEl.style.display='flex';
+    catEntries.forEach(([cat, stat]) => {
+      const pct = Math.round(stat.correct/stat.total*100);
+      const row = document.createElement('div'); row.className='cat-stat-row';
+      row.innerHTML=`
+        <div class="cat-stat-name" title="${cat}">${cat}</div>
+        <div class="cat-bar-wrap"><div class="cat-bar-fill" style="width:${pct}%"></div></div>
+        <div class="cat-stat-pct">${pct}%</div>`;
+      catEl.appendChild(row);
+    });
+  }
+  show('screen-dash');
+}
+
+function drawChart(canvas, data) {
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.offsetWidth||380, H = canvas.offsetHeight||110;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  const pad={t:10,r:10,b:24,l:36};
+  const gW=W-pad.l-pad.r, gH=H-pad.t-pad.b;
+  const rates=data.map(d=>d.correct/d.total);
+  const isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const colText=isDark?'#7a9ab8':'#4a6680';
+  const colGrid=isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)';
+  const colLine=isDark?'#3d9bd4':'#1a6fa8';
+  const colFill=isDark?'rgba(61,155,212,0.15)':'rgba(26,111,168,0.10)';
+  ctx.font='10px sans-serif'; ctx.fillStyle=colText; ctx.textAlign='right';
+  [0,0.5,1].forEach(v=>{
+    const y=pad.t+gH*(1-v);
+    ctx.strokeStyle=colGrid; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+gW,y); ctx.stroke();
+    ctx.fillText(Math.round(v*100)+'%',pad.l-4,y+3);
+  });
+  ctx.textAlign='center'; ctx.fillStyle=colText;
+  rates.forEach((_,i)=>{ if(i===0||i===rates.length-1||rates.length<=5){const x=pad.l+(i/(rates.length-1))*gW;ctx.fillText(i+1,x,H-4);} });
+  ctx.beginPath();
+  rates.forEach((r,i)=>{const x=pad.l+(i/(rates.length-1))*gW,y=pad.t+gH*(1-r);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.lineTo(pad.l+gW,pad.t+gH); ctx.lineTo(pad.l,pad.t+gH); ctx.closePath();
+  ctx.fillStyle=colFill; ctx.fill();
+  ctx.beginPath(); ctx.strokeStyle=colLine; ctx.lineWidth=2; ctx.lineJoin='round';
+  rates.forEach((r,i)=>{const x=pad.l+(i/(rates.length-1))*gW,y=pad.t+gH*(1-r);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.stroke();
+  rates.forEach((r,i)=>{
+    const x=pad.l+(i/(rates.length-1))*gW,y=pad.t+gH*(1-r);
+    ctx.beginPath(); ctx.arc(x,y,3.5,0,Math.PI*2); ctx.fillStyle=colLine; ctx.fill();
+  });
+}
+
+// ── Sound ──
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let _actx = null;
+function getACtx() { if (!_actx) _actx = new AudioCtx(); return _actx; }
+function playTone(freq, type, startTime, duration, gainVal, actx) {
+  const osc = actx.createOscillator();
+  const g   = actx.createGain();
+  osc.connect(g); g.connect(actx.destination);
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, startTime);
+  g.gain.setValueAtTime(gainVal, startTime);
+  g.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.start(startTime); osc.stop(startTime + duration);
+}
+function soundCorrect() {
+  const a = getACtx(), t = a.currentTime;
+  playTone(880, 'sine', t,        0.15, 0.3, a);
+  playTone(1320,'sine', t + 0.12, 0.2,  0.25, a);
+}
+function soundWrong() {
+  const a = getACtx(), t = a.currentTime;
+  playTone(220, 'sawtooth', t,        0.08, 0.18, a);
+  playTone(180, 'sawtooth', t + 0.08, 0.18, 0.15, a);
+}
+function soundPerfect() {
+  const a = getACtx(), t = a.currentTime;
+  [[523,0],[659,0.13],[784,0.26],[1047,0.39]].forEach(([f,dt]) => playTone(f, 'sine', t+dt, 0.28, 0.3, a));
+}
+function soundGreat() {
+  const a = getACtx(), t = a.currentTime;
+  [[659,0],[784,0.12],[1047,0.24]].forEach(([f,dt]) => playTone(f, 'sine', t+dt, 0.22, 0.28, a));
+}
+function soundOk() {
+  const a = getACtx(), t = a.currentTime;
+  playTone(523, 'sine', t,       0.18, 0.25, a);
+  playTone(659, 'sine', t+0.14,  0.22, 0.2,  a);
+}
+function soundLow() {
+  const a = getACtx(), t = a.currentTime;
+  playTone(330, 'triangle', t,       0.2,  0.22, a);
+  playTone(277, 'triangle', t+0.18,  0.25, 0.18, a);
+}
+function soundForResult(correct, total) {
+  const pct = correct / total;
+  if      (pct === 1)  soundPerfect();
+  else if (pct >= 0.8) soundGreat();
+  else if (pct >= 0.6) soundOk();
+  else                 soundLow();
+}
+
+// ── Events ──
+document.getElementById('start-btn').addEventListener('click', startQuiz);
+document.getElementById('dash-btn').addEventListener('click', ()=>{updateStartScreen();showDashboard();});
+document.getElementById('weak-list-btn').addEventListener('click', showWeakList);
+document.getElementById('next-btn').addEventListener('click', ()=>{
+  state.idx++;
+  if (state.idx>=TOTAL) { showResult(); return; }
+  updateProgress(); renderQuestion(state.questions[state.idx]);
+});
+document.getElementById('retry-btn').addEventListener('click',()=>{ updateStartScreen(); startQuiz(); });
+document.getElementById('result-home-btn').addEventListener('click',()=>{ updateStartScreen(); show('screen-start'); });
+document.getElementById('weak-home-btn').addEventListener('click',()=>{ updateStartScreen(); show('screen-start'); });
+document.getElementById('dash-home-btn').addEventListener('click',()=>{ updateStartScreen(); show('screen-start'); });
+document.getElementById('clear-all-btn').addEventListener('click',()=>{
+  if (confirm('苦手問題をすべて削除してよいですか？')) { saveWeak([]); showWeakList(); updateStartScreen(); }
+});
+
+// ── Init ──
+loadCategories();
+updateStartScreen();
+</script>
+</body>
+</html>
