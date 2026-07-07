@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>プライバシーポリシー | 釣り人テスト（つれた日。）</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #fff;
+      color: #374151;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header */
+    .site-header {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-header-inner {
+      max-width: 896px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .back-link {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .back-link:hover { color: #111827; text-decoration: none; }
+    .header-brand {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    /* Main */
+    main {
+      flex: 1;
+      max-width: 896px;
+      margin: 0 auto;
+      padding: 48px 16px 64px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+    .updated {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 40px;
+    }
+    .content { display: flex; flex-direction: column; gap: 36px; }
+    section h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 10px;
+    }
+    section p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #4b5563;
+    }
+    section p + p { margin-top: 8px; }
+    ul {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #4b5563;
+      list-style: disc;
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+    ul li + li { margin-top: 4px; }
+
+    /* Footer */
+    .site-footer {
+      background: #111827;
+      color: #fff;
+      padding: 36px 16px 24px;
+    }
+    .site-footer-inner { max-width: 896px; margin: 0 auto; }
+    .site-footer-brand { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .site-footer-tagline { font-size: 13px; color: #9ca3af; margin-bottom: 20px; }
+    .site-footer-links { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .site-footer-links a { font-size: 13px; color: #9ca3af; text-decoration: none; }
+    .site-footer-links a:hover { color: #fff; }
+    .site-footer-copy {
+      font-size: 12px;
+      color: #6b7280;
+      border-top: 1px solid #1f2937;
+      padding-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="/" class="back-link">← トップへ戻る</a>
+    <span class="header-brand">つれた日。/ 釣り人テスト</span>
+  </div>
+</header>
+
+<main>
+  <h1>プライバシーポリシー</h1>
+  <p class="updated">最終更新日：2026年7月5日</p>
+
+  <div class="content">
+
+    <section>
+      <h2>1. 事業者情報</h2>
+      <p>
+        本サービス「釣り人テスト」（以下「当サービス」）は、「つれた日。」ブランドの一部として個人が運営するクイズサービスです。
+        お問い合わせは下記までご連絡ください。
+      </p>
+      <p>メールアドレス：<a href="mailto:tsuretahi@gmail.com">tsuretahi@gmail.com</a></p>
+    </section>
+
+    <section>
+      <h2>2. 収集する情報</h2>
+      <p>当サービスでは、サーバー側でユーザーの個人情報を収集・保存しません。以下の情報のみ、お使いのデバイスのブラウザ（localStorage）に保存されます。</p>
+      <ul>
+        <li>クイズの回答履歴（正解・不正解の記録）</li>
+        <li>苦手問題リスト</li>
+        <li>カテゴリ別の学習進捗</li>
+        <li>連続学習日数（ストリーク）</li>
+      </ul>
+      <p>これらのデータは当サービスのサーバーには送信されず、お使いのデバイス内にのみ保存されます。</p>
+    </section>
+
+    <section>
+      <h2>3. アクセスログ</h2>
+      <p>
+        当サービスのサーバーは、通常のウェブサーバーとして標準的なアクセスログ（IPアドレス・アクセス日時・リクエスト内容等）を記録する場合があります。
+        これらはサービスの安定運用・不正利用の防止のみに使用し、個人を特定する目的では使用しません。
+      </p>
+    </section>
+
+    <section>
+      <h2>4. 外部サービスの利用</h2>
+      <p>当サービスでは以下の外部サービスを利用しています。</p>
+      <ul>
+        <li>
+          <strong>Wikipedia REST API</strong>：魚種当てカテゴリの問題で魚の画像を取得するために使用します。
+          画像取得時にWikipediaのサーバーにアクセスが発生します。
+          <a href="https://www.wikimedia.org/wiki/Terms_of_Use/ja" target="_blank" rel="noopener noreferrer">Wikimedia利用規約</a>
+        </li>
+        <li>
+          <strong>Render.com</strong>：当サービスのホスティングに使用しています。
+          <a href="https://render.com/privacy" target="_blank" rel="noopener noreferrer">Renderプライバシーポリシー</a>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>5. 問題報告機能について</h2>
+      <p>
+        問題報告ボタンをタップすると、メールアプリが起動します。報告内容（問題ID・問題文等）はメールの本文に自動で記載されますが、
+        送信するかどうかはユーザーご自身の操作によります。送信されたメールはサービス改善のためにのみ使用します。
+      </p>
+    </section>
+
+    <section>
+      <h2>6. データの削除</h2>
+      <p>
+        ブラウザに保存された学習データは、ブラウザの設定から「サイトデータ」または「キャッシュ・Cookie」を削除することで消去できます。
+        また、アプリ内の「苦手問題リスト」画面から「すべてクリア」でも削除可能です。
+      </p>
+    </section>
+
+    <section>
+      <h2>7. コンテンツについての免責</h2>
+      <p>
+        当サービスの問題・解説はAIを活用して作成しており、内容の正確性については保証できません。
+        学習の参考としてご活用いただき、重要な事項は必ず公式情報でご確認ください。
+      </p>
+    </section>
+
+    <section>
+      <h2>8. プライバシーポリシーの変更</h2>
+      <p>
+        当サービスは、必要に応じて本ポリシーを変更することがあります。
+        変更後もサービスをご利用いただいた場合は、変更後のポリシーに同意したものとみなします。
+      </p>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="site-footer-brand">つれた日。</div>
+    <div class="site-footer-tagline">あの日の釣りを、思い出に。</div>
+    <div class="site-footer-links">
+      <a href="/privacy.html">プライバシーポリシー</a>
+      <a href="mailto:tsuretahi@gmail.com">お問い合わせ</a>
+    </div>
+    <div class="site-footer-copy">© 2026 tsuretahi. All rights reserved.</div>
+  </div>
+</footer>
+
+</body>
+</html>
