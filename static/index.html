@@ -433,9 +433,9 @@ function pushHistory(e) {
 }
 function saveCatStat(s) { localStorage.setItem(LS_CAT_STAT, JSON.stringify(s)); }
 
-function addWeak(id, question, answer, category, explanation) {
+function addWeak(id, question, answer, category, explanation, choices) {
   const l = getWeak();
-  if (!l.find(w => w.id === id)) l.push({id, question, answer, category, explanation: explanation||''});
+  if (!l.find(w => w.id === id)) l.push({id, question, answer, category, explanation: explanation||'', choices: choices||[]});
   saveWeak(l);
 }
 function removeWeak(id) { saveWeak(getWeak().filter(w => w.id !== id)); }
@@ -548,16 +548,14 @@ async function buildQuestions() {
       const weakIds = new Set(weak.map(w=>w.id));
       extras = shuffle(all.filter(q=>!weakIds.has(q.id))).slice(0, TOTAL-shuffledWeak.length);
     }
-    const allRes = await fetch(`/questions?count=20`);
-    const allQ = await allRes.json();
-    const allAnswers = allQ.map(q=>q.answer);
+    // 保存済みの choices を使う（answer は /answer/{id} で取得）
     const weakQuestions = shuffledWeak.map(w => {
-      const wrong = shuffle(allAnswers.filter(a=>a!==w.answer)).slice(0,3);
-      return {id:w.id, category:w.category, question:w.question, choices:shuffle([w.answer,...wrong]), answer:w.answer, explanation:w.explanation||'', image:w.image||''};
+      const choices = w.choices && w.choices.length >= 2 ? shuffle(w.choices) : shuffle([w.answer]);
+      return {id:w.id, category:w.category, question:w.question, choices, image:w.image||''};
     });
     return shuffle([...weakQuestions, ...extras]).slice(0,TOTAL);
   }
-  const url = `/questions?count=${TOTAL*3}${cat!=='all'?'&category='+encodeURIComponent(cat):''}`;
+  const url = `/questions?count=50${cat!=='all'?'&category='+encodeURIComponent(cat):''}`;
   const res = await fetch(url);
   const all = await res.json();
   return shuffle(all).slice(0,TOTAL);
@@ -600,29 +598,38 @@ function renderQuestion(item) {
   state.answered = false;
 }
 
-function handleAnswer(chosen, item, clicked) {
+async function handleAnswer(chosen, item, clicked) {
   if (state.answered) return;
   state.answered = true;
-  const correct = chosen===item.answer;
+
+  // 正解・解説をサーバーから取得
+  let answerData = {answer:'', explanation:''};
+  try {
+    const res = await fetch(`/answer/${item.id}`);
+    answerData = await res.json();
+  } catch(e) { console.warn('answer fetch failed', e); }
+
+  const correct = chosen === answerData.answer;
   if (correct) soundCorrect(); else soundWrong();
-  state.results.push({...item, userCorrect:correct, _userAnswer:chosen});
+  const enriched = {...item, answer: answerData.answer, explanation: answerData.explanation};
+  state.results.push({...enriched, userCorrect:correct, _userAnswer:chosen});
   if (correct) removeWeak(item.id);
-  else addWeak(item.id, item.question, item.answer, item.category, item.explanation);
+  else addWeak(item.id, item.question, answerData.answer, item.category, answerData.explanation, item.choices);
   updateCatStat(item.category, correct);
 
   document.querySelectorAll('.choice-btn').forEach(b => {
     b.disabled = true;
     const txt = b.querySelector('span:last-child').textContent;
     const icon = b.querySelector('.choice-icon');
-    if (txt===item.answer) { b.classList.add(b===clicked&&correct?'correct':'reveal'); icon.textContent='✓'; }
+    if (txt===answerData.answer) { b.classList.add(b===clicked&&correct?'correct':'reveal'); icon.textContent='✓'; }
     else if (b===clicked&&!correct) { b.classList.add('wrong'); icon.textContent='✗'; }
   });
   const fb = document.getElementById('feedback');
   fb.className = `feedback show ${correct?'ok':'ng'}`;
-  fb.textContent = correct ? `正解！` : `惜しい。正解は「${item.answer}」`;
-  if (item.explanation) {
+  fb.textContent = correct ? `正解！` : `惜しい。正解は「${answerData.answer}」`;
+  if (answerData.explanation) {
     const ex = document.getElementById('explanation');
-    ex.textContent = `💡 ${item.explanation}`;
+    ex.textContent = `💡 ${answerData.explanation}`;
     ex.className = 'explanation show';
   }
 
@@ -630,7 +637,7 @@ function handleAnswer(chosen, item, clicked) {
   const rb = document.getElementById('report-btn');
   const subject = encodeURIComponent(`[釣りクイズ] 問題報告 #${item.id}`);
   const body = encodeURIComponent(
-    `問題ID: ${item.id}\n問題文: ${item.question}\n選択した回答: ${chosen}\n正解: ${item.answer}\n\n気になった点:\n`
+    `問題ID: ${item.id}\n問題文: ${item.question}\n選択した回答: ${chosen}\n正解: ${answerData.answer}\n\n気になった点:\n`
   );
   rb.href = `mailto:${REPORT_MAIL}?subject=${subject}&body=${body}`;
   rb.className = 'report-btn show';
