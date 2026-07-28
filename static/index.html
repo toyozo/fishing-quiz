@@ -265,6 +265,21 @@
     @keyframes spin { to { transform:rotate(360deg); } }
     .loading-text { font-size:14px; color:var(--text2); }
 
+    .ad-section {
+      width:100%; margin-top:2rem; padding-top:1.5rem;
+      border-top:1px solid var(--border); text-align:center;
+    }
+    .ad-label {
+      font-size:10px; color:var(--text2); letter-spacing:.08em; margin-bottom:12px;
+    }
+    .ad-heading {
+      font-size:16px; font-weight:700; color:var(--text); margin-bottom:10px; letter-spacing:.02em;
+    }
+    .ad-body {
+      font-size:13px; color:var(--text2); line-height:1.85; margin-bottom:20px;
+    }
+    #a8-banner { display:flex; justify-content:center; }
+
     .result-outro {
       font-size:13px; color:var(--text2); text-align:center;
       line-height:1.8; margin-top:1rem; margin-bottom:1.25rem;
@@ -363,6 +378,14 @@
     <div class="result-outro" id="result-outro">次の釣りで<br>思い出してみてください。</div>
     <button class="btn-primary" id="retry-btn">もう一度やってみる</button>
     <button class="btn-ghost" id="result-home-btn">トップへ戻る</button>
+    <!-- 広告セクション -->
+    <div class="ad-section">
+      <p class="ad-label">広告</p>
+      <h2 class="ad-heading">道具選びも、釣りの楽しみ。</h2>
+      <p class="ad-body">釣りは、道具を選ぶ時間も楽しみのひとつ。<br>気になる釣具を眺めているだけでもワクワクします。<br>よかったらこちらものぞいてみてください。</p>
+      <!-- A8.net Banner: ここに広告コードを貼り付け -->
+      <div id="a8-banner"><a href="https://px.a8.net/svt/ejp?a8mat=4B8B4V+3FU6LU+4U5Q+C2GFL" rel="nofollow" target="_blank"><img border="0" width="300" height="250" alt="" src="https://www25.a8.net/svt/bgt?aid=260728159208&wid=001&eno=01&mid=s00000022571002027000&mc=1"></a><img border="0" width="1" height="1" src="https://www19.a8.net/0.gif?a8mat=4B8B4V+3FU6LU+4U5Q+C2GFL" alt=""></div>
+    </div>
   </div>
 
   <!-- ④ WEAK LIST -->
