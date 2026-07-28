@@ -449,6 +449,16 @@
 
 
 
+<!-- LP用広告セクション（フッター直前） -->
+<section class="lp-ad-section" id="lp-ad-section">
+  <div class="lp-ad-inner">
+    <p class="ad-label">広告</p>
+    <h2 class="ad-heading">道具選びも、釣りの楽しみ。</h2>
+    <p class="ad-body">釣りは、道具を選ぶ時間も楽しみのひとつ。<br>気になる釣具を眺めているだけでもワクワクします。<br>よかったらこちらものぞいてみてください。</p>
+    <div id="a8-banner-lp"><a href="https://px.a8.net/svt/ejp?a8mat=4B8ACS+75SPPU+374G+65EOH" rel="nofollow"><img border="0" width="300" height="250" alt="" src="https://www22.a8.net/svt/bgt?aid=260727148433&wid=001&eno=01&mid=s00000014920001033000&mc=1"></a><img border="0" width="1" height="1" src="https://www17.a8.net/0.gif?a8mat=4B8ACS+75SPPU+374G+65EOH" alt=""></div>
+  </div>
+</section>
+
 <footer class="site-footer">
   <div class="site-footer-inner">
     <div class="site-footer-brand">つれた日。</div>
@@ -524,6 +534,9 @@ let categories = [];
 function show(id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  // 結果画面ではLP広告を非表示（結果画面内の広告のみ表示）
+  const lpAd = document.getElementById('lp-ad-section');
+  if (lpAd) lpAd.style.display = id === 'screen-result' ? 'none' : '';
 }
 
 async function loadCategories() {
