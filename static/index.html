@@ -265,10 +265,18 @@
     @keyframes spin { to { transform:rotate(360deg); } }
     .loading-text { font-size:14px; color:var(--text2); }
 
+    /* 結果画面内の広告 */
     .ad-section {
       width:100%; margin-top:2rem; padding-top:1.5rem;
       border-top:1px solid var(--border); text-align:center;
     }
+    /* LP最下部の広告 */
+    .lp-ad-section {
+      background:var(--bg2); border-top:1px solid var(--border);
+      padding:40px 16px 36px; text-align:center;
+    }
+    .lp-ad-inner { max-width:480px; margin:0 auto; }
+    #a8-banner-lp { display:flex; justify-content:center; }
     .ad-label {
       font-size:10px; color:var(--text2); letter-spacing:.08em; margin-bottom:12px;
     }
@@ -425,6 +433,17 @@
 
 </div>
 </main>
+
+<!-- LP用広告セクション（フッター直前） -->
+<section class="lp-ad-section">
+  <div class="lp-ad-inner">
+    <p class="ad-label">広告</p>
+    <h2 class="ad-heading">道具選びも、釣りの楽しみ。</h2>
+    <p class="ad-body">釣りは、道具を選ぶ時間も楽しみのひとつ。<br>気になる釣具を眺めているだけでもワクワクします。<br>よかったらこちらものぞいてみてください。</p>
+    <!-- A8.net Banner: ここに広告コードを貼り付け -->
+    <div id="a8-banner-lp"><a href="https://px.a8.net/svt/ejp?a8mat=4B8B4V+3FU6LU+4U5Q+C2GFL" rel="nofollow" target="_blank"><img border="0" width="300" height="250" alt="" src="https://www25.a8.net/svt/bgt?aid=260728159208&wid=001&eno=01&mid=s00000022571002027000&mc=1"></a><img border="0" width="1" height="1" src="https://www19.a8.net/0.gif?a8mat=4B8B4V+3FU6LU+4U5Q+C2GFL" alt=""></div>
+  </div>
+</section>
 
 <footer class="site-footer">
   <div class="site-footer-inner">
