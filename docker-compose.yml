@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fishing-quiz
+    restart: unless-stopped
+    expose:
+      - "8000"
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
