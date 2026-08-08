@@ -153,6 +153,7 @@
     .progress-fill { height:100%; background:var(--primary); border-radius:2px; transition:width .35s ease; }
     .q-meta { display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:.75rem; }
     .q-count { font-size:13px; color:var(--text2); font-weight:500; }
+    .difficulty-stars { font-size:11px; letter-spacing:1px; }
     .cat-badge {
       font-size:10px; font-weight:500; padding:2px 8px; border-radius:20px;
       background:var(--bg2); color:var(--text2); max-width:60%; overflow:hidden;
@@ -375,6 +376,7 @@
     <div class="progress-wrap"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
     <div class="q-meta">
       <span class="q-count" id="q-count">問1 / 5</span>
+      <span id="q-difficulty" class="difficulty-stars"></span>
       <span id="q-badge" class="cat-badge"></span>
     </div>
     <div class="loading" id="q-loading"><div class="spinner"></div><div class="loading-text">問題を取得中...</div></div>
@@ -637,6 +639,7 @@ function renderQuestion(item) {
   document.getElementById('q-text').textContent = item.question;
   document.getElementById('q-badge').textContent = item.category;
   document.getElementById('q-badge').className = state.mode==='weak' ? 'mode-badge-q' : 'cat-badge';
+  document.getElementById('q-difficulty').textContent = '⭐'.repeat(item.difficulty || 3);
   const el = document.getElementById('choices'); el.innerHTML='';
   item.choices.forEach(ch => {
     const btn = document.createElement('button');
