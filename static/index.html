@@ -941,6 +941,7 @@ document.getElementById('weak-list-btn').addEventListener('click', showWeakList)
 document.getElementById('next-btn').addEventListener('click', ()=>{
   state.idx++;
   if (state.idx>=TOTAL) { showResult(); return; }
+  window.scrollTo({top: 0, behavior: 'instant'});
   updateProgress(); renderQuestion(state.questions[state.idx]);
 });
 document.getElementById('retry-btn').addEventListener('click',()=>{ updateStartScreen(); startQuiz(); });
