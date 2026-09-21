@@ -557,6 +557,7 @@ let categories = [];
 function show(id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  window.scrollTo({top: 0, behavior: 'instant'});
   // 結果画面ではLP広告を非表示（結果画面内の広告のみ表示）
   const lpAd = document.getElementById('lp-ad-section');
   if (lpAd) lpAd.style.display = id === 'screen-result' ? 'none' : '';
