@@ -32,6 +32,7 @@ class QuestionPublic(BaseModel):
     question: str
     choices: List[str]
     image: str = ""
+    difficulty: int = 3
 
 
 # 回答後に返すデータ
@@ -67,6 +68,7 @@ def get_questions(
             question=item["question"],
             choices=choices,
             image=item.get("image", ""),
+            difficulty=item.get("difficulty", 3),
         ))
     return result
 
