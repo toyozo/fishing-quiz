@@ -242,7 +242,7 @@
     .next-btn:hover { opacity:.9; }
     .next-btn:active { transform:scale(.98); }
 
-    .result-icon { font-size:54px; margin-bottom:.75rem; }
+    .result-icon { display:block; width:120px; height:auto; margin-bottom:.75rem; }
     .result-score { font-size:46px; font-weight:700; color:var(--primary); line-height:1; margin-bottom:.3rem; }
     .result-label { font-size:15px; color:var(--text2); margin-bottom:.75rem; }
     .result-msg { font-size:13px; color:var(--text2); margin-bottom:1.25rem; text-align:center; line-height:1.85; white-space:pre-line; }
@@ -447,7 +447,7 @@
 
   <!-- ③ RESULT -->
   <div id="screen-result" class="screen">
-    <div class="result-icon" id="result-icon">🎉</div>
+    <img class="result-icon" src="/result-icon.png" alt="" width="120">
     <div class="result-score" id="result-score">4 / 5</div>
     <div class="result-label" id="result-label">5問中4問正解</div>
     <div class="result-msg" id="result-msg"></div>
@@ -848,12 +848,11 @@ function showResult() {
   document.getElementById('result-score').textContent = `${correct} / ${TOTAL}`;
   document.getElementById('result-label').textContent = `${TOTAL}問中${correct}問正解`;
   const pct = correct/TOTAL;
-  let icon='🎉', msg='';
-  if (pct===1)      { icon='🎣'; msg='全問正解！\n釣りへの愛情が伝わります。'; }
-  else if (pct>=.8) { icon='🐟'; msg='いい感じです。\nきっと次の釣りがもっと楽しくなる。'; }
-  else if (pct>=.6) { icon='🌊'; msg='知らなかったこと、ありましたか？\nそれが次の釣りの楽しみになります。'; }
-  else              { icon='🌅'; msg='釣りは奥が深い。\n今日も新しい発見がありましたね。'; }
-  document.getElementById('result-icon').textContent = icon;
+  let msg='';
+  if (pct===1)      msg='全問正解！\n釣りへの愛情が伝わります。';
+  else if (pct>=.8) msg='いい感じです。\nきっと次の釣りがもっと楽しくなる。';
+  else if (pct>=.6) msg='知らなかったこと、ありましたか？\nそれが次の釣りの楽しみになります。';
+  else              msg='釣りは奥が深い。\n今日も新しい発見がありましたね。';
   document.getElementById('result-msg').textContent = msg;
   const bd = document.getElementById('breakdown'); bd.innerHTML='';
   state.results.forEach(r => {
