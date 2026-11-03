@@ -435,9 +435,9 @@
       <div class="feedback" id="feedback"></div>
       <div class="explanation" id="explanation"></div>
       <div class="amazon-box" id="amazon-box">
-        <span class="amazon-pr">PR</span>
-        <a id="amazon-link" target="_blank" rel="noopener noreferrer sponsored nofollow"></a>
-        <p class="amazon-note">Amazonのアソシエイトとして、つれた日。は適格販売により収入を得ています。</p>
+        <span class="amazon-pr amazon-aff" hidden>PR</span>
+        <a id="amazon-link" target="_blank" rel="noopener noreferrer"></a>
+        <p class="amazon-note amazon-aff" hidden>Amazonのアソシエイトとして、つれた日。は適格販売により収入を得ています。</p>
       </div>
       <a class="report-btn" id="report-btn">⚑ この問題を報告する</a>
       <button class="next-btn" id="next-btn">次の問題へ →</button>
@@ -569,7 +569,7 @@ const LS_WEAK     = 'fishing_quiz_weak';
 const LS_HISTORY  = 'fishing_quiz_history';
 const LS_CAT_STAT = 'fishing_quiz_cat_stat';
 const REPORT_MAIL = 'tsuretahi@gmail.com';
-// Amazonアソシエイトのトラッキング ID（例: 'xxxx-22'）。空のあいだはAmazonリンクを表示しない。
+// Amazonアソシエイトのトラッキング ID（例: 'xxxx-22'）。空のあいだはタグなしの検索リンクだけを出す。
 const AMAZON_TAG = '';
 
 function getWeak()    { try { return JSON.parse(localStorage.getItem(LS_WEAK))    || []; } catch { return []; } }
@@ -799,12 +799,18 @@ async function handleAnswer(chosen, item, clicked) {
     ex.className = 'explanation show';
   }
 
-  // Amazon関連アイテムへのリンク（AMAZON_TAG 未設定なら出さない）
-  if (AMAZON_TAG && answerData.amazon_keyword) {
+  // Amazon関連アイテムへのリンク。
+  // AMAZON_TAG 未設定: 便利機能としてのただの検索リンク（PR表記・規約文なし）
+  // AMAZON_TAG 設定済: アソシエイトリンクにし、PR表記と規約文を出す
+  if (answerData.amazon_keyword) {
     const kw = answerData.amazon_keyword;
     const link = document.getElementById('amazon-link');
-    link.href = `https://www.amazon.co.jp/s?k=${encodeURIComponent(kw)}&tag=${encodeURIComponent(AMAZON_TAG)}`;
+    let url = `https://www.amazon.co.jp/s?k=${encodeURIComponent(kw)}`;
+    if (AMAZON_TAG) url += `&tag=${encodeURIComponent(AMAZON_TAG)}`;
+    link.href = url;
+    link.rel = AMAZON_TAG ? 'noopener noreferrer sponsored nofollow' : 'noopener noreferrer';
     link.textContent = `🛒 「${kw}」をAmazonで探す`;
+    document.querySelectorAll('.amazon-aff').forEach(el => { el.hidden = !AMAZON_TAG; });
     document.getElementById('amazon-box').classList.add('show');
   }
 
