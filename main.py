@@ -5,6 +5,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from questions import QUESTION_BANK, CATEGORIES
+from amazon_keywords import get_amazon_keyword
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -40,6 +41,7 @@ class AnswerResponse(BaseModel):
     id: int
     answer: str
     explanation: str
+    amazon_keyword: str = ""
 
 
 MAX_COUNT = 50
@@ -82,6 +84,7 @@ def get_answer(question_id: int):
         id=q["id"],
         answer=q["answer"],
         explanation=q.get("explanation", ""),
+        amazon_keyword=get_amazon_keyword(q),
     )
 
 

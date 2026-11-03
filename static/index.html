@@ -115,16 +115,27 @@
     }
     .btn-danger:hover { background:var(--red-bg); }
 
-    .start-logo { font-size:52px; margin-bottom:.75rem; }
-    .start-title { font-size:20px; font-weight:700; color:var(--text); margin-bottom:.3rem; text-align:center; }
-    .start-sub { font-size:13px; color:var(--text2); margin-bottom:1rem; text-align:center; line-height:1.7; }
+    .start-title { font-size:22px; font-weight:700; color:var(--text); margin-bottom:.4rem; text-align:center; }
+    .start-sub { font-size:13px; color:var(--text2); margin-bottom:1.1rem; text-align:center; line-height:1.7; }
     .disclaimer {
-      font-size:11px; color:var(--text2); text-align:center;
-      line-height:1.6; margin-bottom:1.25rem; padding:8px 12px;
+      font-size:10px; color:var(--text2); text-align:center;
+      line-height:1.6; margin-top:.5rem; padding:6px 10px;
       background:var(--bg2); border-radius:var(--radius-md);
       border:.5px solid var(--border);
     }
-    .kpi-row { display:flex; gap:8px; width:100%; margin-bottom:1.5rem; }
+    .q-disclaimer { font-size:10px; color:var(--text2); text-align:center; line-height:1.6; margin-top:1.25rem; }
+    .start-options { width:100%; margin-bottom:8px; }
+    .start-options summary {
+      font-size:13px; color:var(--text2); cursor:pointer; text-align:center;
+      padding:6px 0 10px; list-style:none;
+    }
+    .start-options summary::-webkit-details-marker { display:none; }
+    .start-options summary::after { content:' ▾'; }
+    .start-options[open] summary::after { content:' ▴'; }
+    .start-options .cat-select { margin-bottom:1rem; }
+    .ghost-row { display:flex; gap:8px; width:100%; }
+    .ghost-row .btn-ghost { flex:1; font-size:13px; padding:11px 4px; margin-bottom:0; }
+    .kpi-row { display:flex; gap:8px; width:100%; margin-bottom:1rem; }
     .kpi-card { flex:1; background:var(--bg2); border-radius:var(--radius-md); padding:.75rem; text-align:center; }
     .kpi-card .num { font-size:19px; font-weight:700; color:var(--primary); }
     .kpi-card .lbl { font-size:11px; color:var(--text2); margin-top:2px; }
@@ -202,6 +213,16 @@
       width:100%; opacity:0; transition:opacity .2s; display:none;
     }
     .explanation.show { opacity:1; display:block; }
+    .amazon-box {
+      display:none; width:100%; margin-top:.6rem; padding:9px 12px;
+      border:.5px solid var(--border2); border-radius:var(--radius-md);
+      background:var(--bg); font-size:12px; line-height:1.6;
+    }
+    .amazon-box.show { display:block; }
+    .amazon-pr { font-size:10px; color:var(--text2); border:.5px solid var(--border2); border-radius:3px; padding:0 4px; margin-right:6px; }
+    .amazon-box a { color:var(--primary); font-weight:600; text-decoration:none; }
+    .amazon-box a:hover { text-decoration:underline; }
+    .amazon-note { font-size:10px; color:var(--text2); margin-top:3px; }
     .report-btn {
       margin-top:.4rem; padding:5px 12px; font-size:11px; color:var(--text2);
       background:transparent; border:.5px solid var(--border2); border-radius:20px;
@@ -350,11 +371,11 @@
 
 <header class="site-header">
   <div class="site-header-inner">
-    <span class="site-brand">
+    <a class="site-brand" id="site-brand" href="/">
       <img src="/logo.png" alt="つれた日。" style="height:32px;width:auto;flex-shrink:0;">
       <span class="site-brand-sep">/</span>
       <span class="site-brand-sub">釣りクイズ</span>
-    </span>
+    </a>
   </div>
 </header>
 
@@ -363,32 +384,37 @@
 
   <!-- ① START -->
   <div id="screen-start" class="screen active">
-    <div class="start-logo"><img src="/hero.png" alt="つれた日。釣りクイズ" style="width:160px;height:160px;object-fit:contain;"></div>
     <div class="start-title">釣りクイズ</div>
-    <div class="start-sub">知ると、<br>次の釣りがもっと楽しくなる。<br><br>魚のこと、釣りのこと。<br>気軽に楽しむ5問クイズ。</div>
-    <div class="disclaimer">問題・解説はAIを活用して作成しており、内容の正確性については保証できません。重要な事項は公式情報でご確認ください。</div>
-    <div class="kpi-row">
+    <div class="start-sub">知ると、次の釣りがもっと楽しくなる。<br>魚のこと、釣りのこと。気軽に楽しむ5問クイズ。</div>
+    <div class="kpi-row" id="kpi-row">
       <div class="kpi-card"><div class="num" id="stat-total">0</div><div class="lbl">チャレンジした問題</div></div>
       <div class="kpi-card"><div class="num" id="stat-weak">0</div><div class="lbl">あとでもう一度</div></div>
       <div class="kpi-card"><div class="num" id="stat-streak">0</div><div class="lbl">続けた日</div></div>
     </div>
 
-    <div class="cat-label">カテゴリ</div>
-    <select class="cat-select" id="cat-select">
-      <option value="all">すべて</option>
-    </select>
-
-    <div class="mode-row">
-      <button class="mode-btn selected" id="mode-normal" onclick="selectMode('normal')">
-        <span class="mi">🎣</span>通常
-      </button>
-      <button class="mode-btn" id="mode-weak" onclick="selectMode('weak')">
-        <span class="mi">🔁</span>おさらい
-      </button>
-    </div>
     <button class="btn-primary" id="start-btn">クイズをはじめる</button>
-    <button class="btn-ghost" id="dash-btn">これまでの記録を見る</button>
-    <button class="btn-ghost" id="weak-list-btn">あとでもう一度の問題を見る</button>
+
+    <details class="start-options">
+      <summary>カテゴリ・モード：<span id="opt-summary">すべて・通常</span></summary>
+      <div class="cat-label">カテゴリ</div>
+      <select class="cat-select" id="cat-select">
+        <option value="all">すべて</option>
+      </select>
+      <div class="mode-row">
+        <button class="mode-btn selected" id="mode-normal" onclick="selectMode('normal')">
+          <span class="mi">🎣</span>通常
+        </button>
+        <button class="mode-btn" id="mode-weak" onclick="selectMode('weak')">
+          <span class="mi">🔁</span>おさらい
+        </button>
+      </div>
+    </details>
+
+    <div class="ghost-row">
+      <button class="btn-ghost" id="dash-btn">これまでの記録</button>
+      <button class="btn-ghost" id="weak-list-btn">あとでもう一度の問題</button>
+    </div>
+    <div class="disclaimer">問題・解説はAIを活用して作成しており、内容の正確性については保証できません。重要な事項は公式情報でご確認ください。</div>
   </div>
 
   <!-- ② QUESTION -->
@@ -406,9 +432,15 @@
       <div class="choices" id="choices"></div>
       <div class="feedback" id="feedback"></div>
       <div class="explanation" id="explanation"></div>
+      <div class="amazon-box" id="amazon-box">
+        <span class="amazon-pr">PR</span>
+        <a id="amazon-link" target="_blank" rel="noopener noreferrer sponsored nofollow"></a>
+        <p class="amazon-note">Amazonのアソシエイトとして、つれた日。は適格販売により収入を得ています。</p>
+      </div>
       <a class="report-btn" id="report-btn">⚑ この問題を報告する</a>
       <button class="next-btn" id="next-btn">次の問題へ →</button>
     </div>
+    <p class="q-disclaimer">問題・解説はAIを活用して作成しており、内容の正確性については保証できません。重要な事項は公式情報でご確認ください。</p>
   </div>
 
   <!-- ③ RESULT -->
@@ -535,6 +567,8 @@ const LS_WEAK     = 'fishing_quiz_weak';
 const LS_HISTORY  = 'fishing_quiz_history';
 const LS_CAT_STAT = 'fishing_quiz_cat_stat';
 const REPORT_MAIL = 'tsuretahi@gmail.com';
+// Amazonアソシエイトのトラッキング ID（例: 'xxxx-22'）。空のあいだはAmazonリンクを表示しない。
+const AMAZON_TAG = '';
 
 function getWeak()    { try { return JSON.parse(localStorage.getItem(LS_WEAK))    || []; } catch { return []; } }
 function getHistory() { try { return JSON.parse(localStorage.getItem(LS_HISTORY)) || []; } catch { return []; } }
@@ -617,13 +651,23 @@ function selectMode(mode) {
   selectedMode = mode;
   document.getElementById('mode-normal').classList.toggle('selected', mode==='normal');
   document.getElementById('mode-weak').classList.toggle('selected', mode==='weak');
+  updateOptSummary();
+}
+
+function updateOptSummary() {
+  const cat = document.getElementById('cat-select').value;
+  document.getElementById('opt-summary').textContent =
+    `${cat==='all' ? 'すべて' : cat}・${selectedMode==='weak' ? 'おさらい' : '通常'}`;
 }
 
 function updateStartScreen() {
   const h = getHistory();
   const weak = getWeak();
-  document.getElementById('stat-total').textContent = h.reduce((s,e)=>s+e.total,0);
+  const total = h.reduce((s,e)=>s+e.total,0);
+  document.getElementById('stat-total').textContent = total;
   document.getElementById('stat-weak').textContent = weak.length;
+  // 記録がまだない間は集計カードを出さず、開始ボタンを上に寄せる
+  document.getElementById('kpi-row').style.display = (total===0 && weak.length===0) ? 'none' : 'flex';
   const {streak} = calcStreak(h);
   document.getElementById('stat-streak').textContent = streak;
   const wb = document.getElementById('mode-weak');
@@ -709,6 +753,7 @@ function renderQuestion(item) {
   document.getElementById('feedback').textContent = '';
   document.getElementById('explanation').className = 'explanation';
   document.getElementById('explanation').textContent = '';
+  document.getElementById('amazon-box').classList.remove('show');
   const rb = document.getElementById('report-btn');
   rb.className = 'report-btn'; rb.href = '#';
   const nb = document.getElementById('next-btn');
@@ -750,6 +795,15 @@ async function handleAnswer(chosen, item, clicked) {
     const ex = document.getElementById('explanation');
     ex.textContent = `💡 ${answerData.explanation}`;
     ex.className = 'explanation show';
+  }
+
+  // Amazon関連アイテムへのリンク（AMAZON_TAG 未設定なら出さない）
+  if (AMAZON_TAG && answerData.amazon_keyword) {
+    const kw = answerData.amazon_keyword;
+    const link = document.getElementById('amazon-link');
+    link.href = `https://www.amazon.co.jp/s?k=${encodeURIComponent(kw)}&tag=${encodeURIComponent(AMAZON_TAG)}`;
+    link.textContent = `🛒 「${kw}」をAmazonで探す`;
+    document.getElementById('amazon-box').classList.add('show');
   }
 
   // 報告ボタン（mailto）
@@ -987,9 +1041,19 @@ document.getElementById('clear-all-btn').addEventListener('click',()=>{
   if (confirm('苦手問題をすべて削除してよいですか？')) { saveWeak([]); showWeakList(); updateStartScreen(); }
 });
 
+document.getElementById('cat-select').addEventListener('change', updateOptSummary);
+document.getElementById('site-brand').addEventListener('click', e=>{
+  e.preventDefault();
+  const inQuiz = document.getElementById('screen-question').classList.contains('active') && state.idx>0;
+  if (inQuiz && !confirm('クイズを中断してトップへ戻りますか？')) return;
+  updateStartScreen(); show('screen-start');
+});
+
 // ── Init ──
 loadCategories();
 updateStartScreen();
+// 記録のない訪問者（初回など）は、トップを挟まずそのまま出題する
+if (getHistory().length === 0) startQuiz();
 </script>
 </body>
 </html>

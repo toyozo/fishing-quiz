@@ -7,6 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main.py .
 COPY questions.py .
+COPY amazon_keywords.py .
 COPY static/ ./static/
 
 EXPOSE 8000
