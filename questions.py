@@ -468,7 +468,7 @@ QUESTION_BANK = [
         "difficulty": 3,
         "category": "魚種当て",
         "question": "この魚はどれでしょう？（縦縞模様と猫のような目が特徴のロックフィッシュ）",
-        "image": "wiki:タケノコメバル",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sebastes_oblongus.jpg?width=640",
         "choices": ["タケノコメバル", "クロメバル", "シロメバル", "アカメバル"],
         "answer": "タケノコメバル",
         "explanation": "タケノコメバルは体に7〜8本の暗色縦縞があり、眼が猫目のように縦長な瞳孔が特徴。メバルより浅い岩礁帯に生息。"
@@ -2868,7 +2868,7 @@ QUESTION_BANK = [
         "question": "日本最大の淡水魚で、北海道の一部河川にのみ生息し、体長1mを超えることもあるサケ科の希少魚はどれですか？",
         "choices": ["イトウ", "アメマス", "サクラマス", "ニジマス"],
         "answer": "イトウ",
-        "image": "wiki:イトウ (魚)",
+        "image": "wiki:イトウ",
         "explanation": "イトウ（Hucho perryi）は日本最大の淡水魚で最大体長1.5m・体重30kgに達する。北海道の天塩川・釧路川など限られた河川にのみ生息し、環境省レッドリストで絶滅危惧IB類に指定されている。「幻の魚」として渓流釣り師の憧れ。"
     },
 ]
