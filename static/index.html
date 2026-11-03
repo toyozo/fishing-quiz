@@ -232,13 +232,15 @@
     .report-btn.show { display:inline-block; }
     .report-btn:hover { background:var(--red-bg); color:var(--red-text); border-color:var(--red-border); }
     .next-btn {
-      margin-top:.85rem; width:100%; padding:12px; background:transparent;
-      border:.5px solid var(--border2); border-radius:var(--radius-lg);
-      font-size:14px; font-weight:500; color:var(--text);
-      cursor:pointer; opacity:0; pointer-events:none; transition:opacity .2s,background .12s;
+      margin-top:1rem; width:100%; padding:15px; background:var(--primary);
+      border:none; border-radius:var(--radius-lg);
+      font-size:16px; font-weight:700; color:#fff; letter-spacing:.02em;
+      box-shadow:0 4px 12px rgba(26,69,128,.28);
+      cursor:pointer; opacity:0; pointer-events:none; transition:opacity .2s,transform .1s;
     }
     .next-btn.show { opacity:1; pointer-events:auto; }
-    .next-btn:hover { background:var(--bg2); }
+    .next-btn:hover { opacity:.9; }
+    .next-btn:active { transform:scale(.98); }
 
     .result-icon { font-size:54px; margin-bottom:.75rem; }
     .result-score { font-size:46px; font-weight:700; color:var(--primary); line-height:1; margin-bottom:.3rem; }
