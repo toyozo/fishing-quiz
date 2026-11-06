@@ -1,11 +1,14 @@
 import random
 from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from questions import QUESTION_BANK, CATEGORIES
 from amazon_keywords import get_amazon_keyword
+from glossary import GLOSSARY
+from glossary_page import render_glossary_html
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -91,6 +94,23 @@ def get_answer(question_id: int):
 @app.get("/categories")
 def get_categories():
     return {"categories": CATEGORIES}
+
+
+# 解説のツールチップ用。フロントが一度だけ取得して照合に使う
+_GLOSSARY_PUBLIC = [
+    {"term": g["term"], "aliases": g["aliases"], "desc": g["desc"]} for g in GLOSSARY
+]
+_GLOSSARY_HTML = render_glossary_html()
+
+
+@app.get("/glossary")
+def get_glossary():
+    return _GLOSSARY_PUBLIC
+
+
+@app.get("/glossary.html", response_class=HTMLResponse, include_in_schema=False)
+def glossary_page():
+    return _GLOSSARY_HTML
 
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")

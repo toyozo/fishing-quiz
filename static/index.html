@@ -213,6 +213,17 @@
       width:100%; opacity:0; transition:opacity .2s; display:none;
     }
     .explanation.show { opacity:1; display:block; }
+    .term { border-bottom:1.5px dotted var(--primary); color:var(--text); cursor:help; }
+    .term:focus-visible { outline:2px solid var(--primary); outline-offset:1px; border-radius:2px; }
+    .term-tip {
+      position:absolute; z-index:300; width:max-content; max-width:min(300px, calc(100vw - 16px));
+      background:#0d2137; color:#fff; font-size:12px; line-height:1.7;
+      padding:10px 12px; border-radius:var(--radius-md); box-shadow:0 4px 14px rgba(0,0,0,.25);
+    }
+    .term-tip[hidden] { display:none; }
+    .term-tip b { display:block; font-size:13px; margin-bottom:2px; }
+    .term-tip a { display:inline-block; margin-top:4px; color:#93c5fd; }
+    a.btn-ghost { display:block; text-align:center; text-decoration:none; }
     .amazon-box {
       display:none; width:100%; margin-top:.6rem; padding:9px 12px;
       border:.5px solid var(--border2); border-radius:var(--radius-md);
@@ -416,6 +427,7 @@
       <button class="btn-ghost" id="dash-btn">これまでの記録</button>
       <button class="btn-ghost" id="weak-list-btn">あとでもう一度の問題</button>
     </div>
+    <a class="btn-ghost" href="/glossary.html" style="margin-top:8px">📖 釣り用語集</a>
     <div class="disclaimer">問題・解説はAIを活用して作成しており、内容の正確性については保証できません。重要な事項は公式情報でご確認ください。</div>
   </div>
 
@@ -556,12 +568,15 @@
     <div class="site-footer-brand">つれた日。</div>
     <div class="site-footer-tagline">たのしいをつろう。</div>
     <div class="site-footer-links">
+      <a href="/glossary.html">釣り用語集</a>
       <a href="/privacy.html">プライバシーポリシー</a>
       <a href="mailto:tsuretahi@gmail.com">お問い合わせ</a>
     </div>
     <div class="site-footer-copy">© 2026 tsuretahi. All rights reserved.</div>
   </div>
 </footer>
+
+<div class="term-tip" id="term-tip" role="tooltip" hidden></div>
 
 <script>
 const TOTAL = 5;
@@ -755,6 +770,7 @@ function renderQuestion(item) {
   document.getElementById('feedback').textContent = '';
   document.getElementById('explanation').className = 'explanation';
   document.getElementById('explanation').textContent = '';
+  hideTip();
   document.getElementById('amazon-box').classList.remove('show');
   const rb = document.getElementById('report-btn');
   rb.className = 'report-btn'; rb.href = '#';
@@ -795,7 +811,7 @@ async function handleAnswer(chosen, item, clicked) {
   fb.textContent = correct ? `正解！` : `惜しい。正解は「${answerData.answer}」`;
   if (answerData.explanation) {
     const ex = document.getElementById('explanation');
-    ex.textContent = `💡 ${answerData.explanation}`;
+    renderWithTerms(ex, `💡 ${answerData.explanation}`);
     ex.className = 'explanation show';
   }
 
@@ -1057,7 +1073,109 @@ document.getElementById('site-brand').addEventListener('click', e=>{
   updateStartScreen(); show('screen-start');
 });
 
+// ── 用語集ツールチップ ──
+// 解説に出てくる釣り用語に点線を付け、PCはホバー、スマホはタップで意味を表示する。
+let GLOSSARY_KEYS = [];            // 見出し語・同義語を長い順に並べた照合用リスト
+const GLOSSARY_BY_TERM = new Map();
+const KATAKANA = /[ァ-ヶー]/;
+const KANJI = /[一-龥]/;
+
+async function loadGlossary() {
+  try {
+    const list = await (await fetch('/glossary')).json();
+    list.forEach(e => GLOSSARY_BY_TERM.set(e.term, e));
+    GLOSSARY_KEYS = list
+      .flatMap(e => [e.term, ...e.aliases].map(key => ({key, entry:e})))
+      .sort((a, b) => b.key.length - a.key.length);
+  } catch(e) { console.warn('glossary fetch failed', e); }
+}
+
+// text を el に描画する。用語は1つの解説につき最初の1回だけ印を付ける。
+function renderWithTerms(el, text) {
+  el.textContent = '';
+  const taken = [], used = new Set();
+  for (const {key, entry} of GLOSSARY_KEYS) {
+    if (used.has(entry)) continue;
+    let from = 0, s;
+    while ((s = text.indexOf(key, from)) !== -1) {
+      const e = s + key.length;
+      from = s + 1;
+      if (taken.some(t => s < t.e && e > t.s)) continue;
+      // 「ライトライン」の「ライン」のように、カタカナ語の途中は拾わない
+      if (s > 0 && KATAKANA.test(text[s-1]) && KATAKANA.test(key[0])) continue;
+      // 「タナゴ」の「タナ」、「スレッド」の「スレ」のように、短いカタカナ語が別の語の一部になる場合も拾わない
+      if (key.length <= 2 && KATAKANA.test(key[key.length-1]) && KATAKANA.test(text[e] || '')) continue;
+      // 「浅瀬」の「瀬」のように、1文字の漢字語が熟語の途中にある場合も拾わない
+      if (key.length === 1 && s > 0 && KANJI.test(text[s-1])) continue;
+      taken.push({s, e, entry}); used.add(entry);
+      break;
+    }
+  }
+  taken.sort((a, b) => a.s - b.s);
+  let pos = 0;
+  for (const t of taken) {
+    el.append(text.slice(pos, t.s));
+    const span = document.createElement('span');
+    span.className = 'term';
+    span.tabIndex = 0;
+    span.setAttribute('role', 'button');
+    span.dataset.term = t.entry.term;
+    span.textContent = text.slice(t.s, t.e);
+    el.append(span);
+    pos = t.e;
+  }
+  el.append(text.slice(pos));
+}
+
+const termTip = document.getElementById('term-tip');
+let tipFor = null, tipPinned = false;
+
+function showTip(span, pin) {
+  const e = GLOSSARY_BY_TERM.get(span.dataset.term);
+  if (!e) return;
+  const title = document.createElement('b'); title.textContent = e.term;
+  const desc = document.createElement('span'); desc.textContent = e.desc;
+  const more = document.createElement('a');
+  more.href = `/glossary.html#${encodeURIComponent(e.term)}`;
+  more.target = '_blank'; more.rel = 'noopener';
+  more.textContent = '用語集で見る →';
+  termTip.replaceChildren(title, desc, document.createElement('br'), more);
+  termTip.hidden = false;
+  const r = span.getBoundingClientRect();
+  const w = termTip.offsetWidth, h = termTip.offsetHeight;
+  const left = Math.min(Math.max(8, r.left), document.documentElement.clientWidth - w - 8);
+  const below = r.bottom + 6;
+  const top = (below + h > window.innerHeight && r.top - 6 - h > 0) ? r.top - 6 - h : below;
+  termTip.style.left = `${left + window.scrollX}px`;
+  termTip.style.top  = `${top + window.scrollY}px`;
+  tipFor = span; tipPinned = pin;
+}
+function hideTip() { termTip.hidden = true; tipFor = null; tipPinned = false; }
+
+if (window.matchMedia('(hover: hover)').matches) {
+  document.addEventListener('mouseover', ev => {
+    const t = ev.target.closest('.term');
+    if (t && !tipPinned) showTip(t, false);
+  });
+  document.addEventListener('mouseout', ev => {
+    if (!tipPinned && ev.target.closest('.term')) hideTip();
+  });
+}
+document.addEventListener('click', ev => {
+  const t = ev.target.closest('.term');
+  if (t) { if (tipFor === t && tipPinned) hideTip(); else showTip(t, true); return; }
+  if (!ev.target.closest('#term-tip')) hideTip();
+});
+document.addEventListener('keydown', ev => {
+  if (ev.key === 'Escape') hideTip();
+  else if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList && ev.target.classList.contains('term')) {
+    ev.preventDefault(); ev.target.click();
+  }
+});
+window.addEventListener('resize', hideTip);
+
 // ── Init ──
+loadGlossary();
 loadCategories();
 updateStartScreen();
 // 記録のない訪問者（初回など）は、トップを挟まずそのまま出題する
